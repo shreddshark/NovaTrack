@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from "vue"
+import { ref, onMounted, watch, nextTick } from "vue"
 import { gsap } from "gsap"
 import { useRoute, useRouter } from "vue-router"
 import {
@@ -16,48 +16,69 @@ const route = useRoute()
 const router = useRouter()
 const activeLink = ref(route.path)
 
-const toggleSidebar = () => {
+const toggleSidebar = async () => {
   isOpen.value = !isOpen.value
+
+  // Wait for DOM to update before recalculating indicator position
+  await nextTick()
+  updateIndicator()
+}
+
+const updateIndicator = () => {
+  const el = document.querySelector(`[data-path="${route.path}"]`)
+  const offset = el?.offsetTop || 0
+  gsap.to(".active-indicator", {
+    y: offset,
+    duration: 0.3,
+    ease: "power2.out",
+  })
 }
 
 watch(
   () => route.path,
-  (newPath) => {
-    activeLink.value = newPath
-    gsap.to(".active-indicator", {
-      x: document.querySelector(`[data-path="${newPath}"]`)?.offsetTop || 0,
-      duration: 0.3,
-      ease: "power2.out",
-    })
+  () => {
+    activeLink.value = route.path
+    updateIndicator()
   }
 )
 
 onMounted(() => {
-  // Optional: animate sidebar in
   gsap.from(".sidebar", {
     x: -200,
     opacity: 0,
     duration: 0.5,
     ease: "power3.out",
   })
+
+  updateIndicator()
 })
 </script>
 
 <template>
   <aside
     :class="[
-      'sidebar h-screen bg-gray-900 text-white shadow-xl transition-all duration-300',
+      'sidebar h-screen bg-gray-900 text-white shadow-xl transition-all duration-300 overflow-hidden',
       isOpen ? 'w-64' : 'w-16',
     ]"
   >
     <div class="flex justify-between items-center px-4 py-4">
-      <h1 class="font-bold text-neon-green text-xl" v-if="isOpen">NovaTrack</h1>
+      <h1
+        class="font-bold text-neon-green text-xl whitespace-nowrap"
+        v-if="isOpen"
+      >
+        NovaTrack
+      </h1>
       <button @click="toggleSidebar" class="focus:outline-none text-white">
         <component :is="isOpen ? XMarkIcon : Bars3Icon" class="w-6 h-6" />
       </button>
     </div>
 
     <nav class="relative mt-6">
+      <!-- Active link indicator -->
+      <div
+        class="left-0 absolute bg-neon-green rounded w-1 transition-all duration-300 active-indicator"
+        :style="{ top: '0px', height: '48px' }"
+      />
       <ul class="space-y-2">
         <li
           v-for="link in [
@@ -78,7 +99,7 @@ onMounted(() => {
             ]"
           >
             <component :is="link.icon" class="w-5 h-5" />
-            <span v-if="isOpen">{{ link.name }}</span>
+            <span v-if="isOpen" class="whitespace-nowrap">{{ link.name }}</span>
           </div>
         </li>
       </ul>
