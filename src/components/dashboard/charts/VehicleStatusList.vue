@@ -1,253 +1,11 @@
 <script setup>
 import { ref, computed, watch } from "vue"
+import { useFleetStore } from "../useFleetStore"
 
-const allVehicles = ref([
-  {
-    id: 1,
-    name: "Truck 101",
-    status: "In Transit",
-    driver: "John D.",
-    location: "I-40 Eastbound",
-    fuelLevel: 65,
-    mileage: 120230,
-    eta: "12:45 PM",
-    lastUpdated: "11:05 AM",
-  },
-  {
-    id: 2,
-    name: "Van 202",
-    status: "Home Base",
-    driver: "Maria K.",
-    location: "Depot 2",
-    fuelLevel: 88,
-    mileage: 90012,
-    eta: null,
-    lastUpdated: "10:58 AM",
-  },
-  {
-    id: 3,
-    name: "SUV 113",
-    status: "In Transit",
-    driver: "Lana B.",
-    location: "Depot 2",
-    fuelLevel: 36,
-    mileage: 99184,
-    eta: "12:00 AM",
-    lastUpdated: "12:02 AM",
-  },
-  {
-    id: 4,
-    name: "Truck 606",
-    status: "In Transit",
-    driver: "Alex R.",
-    location: "I-65 Northbound",
-    fuelLevel: 67,
-    mileage: 86263,
-    eta: "12:10 AM",
-    lastUpdated: "12:12 AM",
-  },
-  {
-    id: 5,
-    name: "Car 107",
-    status: "Home Base",
-    driver: "Ivy W.",
-    location: "I-65 Northbound",
-    fuelLevel: 52,
-    mileage: 182589,
-    eta: null,
-    lastUpdated: "11:46 PM",
-  },
-  {
-    id: 6,
-    name: "Car 443",
-    status: "Home Base",
-    driver: "Sam O.",
-    location: "Depot 2",
-    fuelLevel: 35,
-    mileage: 91730,
-    eta: null,
-    lastUpdated: "12:47 AM",
-  },
-  {
-    id: 7,
-    name: "Car 655",
-    status: "Home Base",
-    driver: "Nina T.",
-    location: "I-40 Eastbound",
-    fuelLevel: 28,
-    mileage: 100814,
-    eta: null,
-    lastUpdated: "1:13 AM",
-  },
-  {
-    id: 8,
-    name: "Truck 650",
-    status: "Home Base",
-    driver: "Lana B.",
-    location: "I-40 Eastbound",
-    fuelLevel: 40,
-    mileage: 132477,
-    eta: null,
-    lastUpdated: "11:58 PM",
-  },
-  {
-    id: 9,
-    name: "Car 650",
-    status: "Home Base",
-    driver: "Ivy W.",
-    location: "I-65 Northbound",
-    fuelLevel: 28,
-    mileage: 47805,
-    eta: null,
-    lastUpdated: "12:53 AM",
-  },
-  {
-    id: 10,
-    name: "Van 928",
-    status: "Home Base",
-    driver: "Tom F.",
-    location: "I-65 Northbound",
-    fuelLevel: 67,
-    mileage: 101637,
-    eta: null,
-    lastUpdated: "11:59 PM",
-  },
-  {
-    id: 11,
-    name: "Car 938",
-    status: "Home Base",
-    driver: "Tom F.",
-    location: "Warehouse 5",
-    fuelLevel: 59,
-    mileage: 156708,
-    eta: null,
-    lastUpdated: "11:58 PM",
-  },
-  {
-    id: 12,
-    name: "Car 576",
-    status: "Home Base",
-    driver: "Nina T.",
-    location: "Loading Dock",
-    fuelLevel: 37,
-    mileage: 136284,
-    eta: null,
-    lastUpdated: "1:19 AM",
-  },
-  {
-    id: 13,
-    name: "Truck 721",
-    status: "In Transit",
-    driver: "Rick M.",
-    location: "Highway 96 Westbound",
-    fuelLevel: 44,
-    mileage: 113849,
-    eta: "1:45 AM",
-    lastUpdated: "1:18 AM",
-  },
-  {
-    id: 14,
-    name: "Van 833",
-    status: "In Transit",
-    driver: "Lana B.",
-    location: "I-24 Eastbound",
-    fuelLevel: 53,
-    mileage: 98422,
-    eta: "2:05 AM",
-    lastUpdated: "1:14 AM",
-  },
-  {
-    id: 15,
-    name: "Truck 204",
-    status: "Home Base",
-    driver: "Sam O.",
-    location: "Depot 3",
-    fuelLevel: 72,
-    mileage: 124199,
-    eta: null,
-    lastUpdated: "12:44 AM",
-  },
-  {
-    id: 16,
-    name: "SUV 311",
-    status: "In Transit",
-    driver: "Maria K.",
-    location: "I-40 Westbound",
-    fuelLevel: 61,
-    mileage: 77532,
-    eta: "2:30 AM",
-    lastUpdated: "1:12 AM",
-  },
-  {
-    id: 17,
-    name: "Truck 459",
-    status: "Home Base",
-    driver: "Alex R.",
-    location: "Garage A",
-    fuelLevel: 89,
-    mileage: 143857,
-    eta: null,
-    lastUpdated: "12:25 AM",
-  },
-  {
-    id: 18,
-    name: "Van 370",
-    status: "Home Base",
-    driver: "Tom F.",
-    location: "Depot 1",
-    fuelLevel: 42,
-    mileage: 123903,
-    eta: null,
-    lastUpdated: "12:50 AM",
-  },
-  {
-    id: 19,
-    name: "Truck 999",
-    status: "In Transit",
-    driver: "Rick M.",
-    location: "I-65 Southbound",
-    fuelLevel: 33,
-    mileage: 110432,
-    eta: "3:15 AM",
-    lastUpdated: "1:21 AM",
-  },
-  {
-    id: 20,
-    name: "Car 452",
-    status: "Home Base",
-    driver: "Ivy W.",
-    location: "Warehouse 2",
-    fuelLevel: 77,
-    mileage: 92845,
-    eta: null,
-    lastUpdated: "12:40 AM",
-  },
-  {
-    id: 21,
-    name: "SUV 515",
-    status: "Home Base",
-    driver: "Nina T.",
-    location: "Depot 3",
-    fuelLevel: 58,
-    mileage: 104377,
-    eta: null,
-    lastUpdated: "12:51 AM",
-  },
-  {
-    id: 22,
-    name: "Truck 888",
-    status: "In Transit",
-    driver: "Maria K.",
-    location: "I-24 Westbound",
-    fuelLevel: 46,
-    mileage: 139214,
-    eta: "3:00 AM",
-    lastUpdated: "1:20 AM",
-  },
-])
+const { vehicles: allVehicles } = useFleetStore()
 
-const perPageOptions = [5, 10, 20, 50, "All"]
-const perPage = ref(5)
+const perPageOptions = ["5", "10", "20", "50", "All"]
+const perPage = ref("5")
 
 const statusFilterOptions = ["All", "In Transit", "Home Base"]
 const statusFilter = ref("All")
@@ -255,19 +13,22 @@ const statusFilter = ref("All")
 const currentPage = ref(1)
 
 const filteredVehicles = computed(() => {
-  if (statusFilter.value === "All") return allVehicles.value
-  return allVehicles.value.filter((v) => v.status === statusFilter.value)
+  if (statusFilter.value === "All") return allVehicles
+  return allVehicles.filter((v) => v.status === statusFilter.value)
 })
 
 const totalPages = computed(() => {
+  const list = allVehicles || []
   if (perPage.value === "All") return 1
-  return Math.ceil(filteredVehicles.value.length / perPage.value)
+  return Math.ceil(list.length / Number(perPage.value) || 1)
 })
 
-const paginatedVehicles = computed(() => {
-  if (perPage.value === "All") return filteredVehicles.value
-  const start = (currentPage.value - 1) * perPage.value
-  return filteredVehicles.value.slice(start, start + perPage.value)
+const paginated = computed(() => {
+  const list = allVehicles || []
+  if (perPage.value === "All") return list
+  const perPageNum = Number(perPage.value) || 10
+  const start = (currentPage.value - 1) * perPageNum
+  return list.slice(start, start + perPageNum)
 })
 
 watch([statusFilter, perPage], () => {
@@ -339,26 +100,26 @@ watch([statusFilter, perPage], () => {
           class="gap-2 grid grid-cols-2 md:grid-cols-3 text-gray-300 text-sm"
         >
           <div>
-            <span class="font-medium text-white">Driver:</span>
+            <span class="font-bold text-white">Driver:</span>
             {{ vehicle.driver }}
           </div>
           <div>
-            <span class="font-medium text-white">Location:</span>
+            <span class="font-bold text-white">Location:</span>
             {{ vehicle.location }}
           </div>
           <div>
-            <span class="font-medium text-white">Fuel:</span>
+            <span class="font-bold text-white">Fuel:</span>
             {{ vehicle.fuelLevel }}%
           </div>
           <div>
-            <span class="font-medium text-white">Mileage:</span>
+            <span class="font-bold text-white">Mileage:</span>
             {{ vehicle.mileage.toLocaleString() }} mi
           </div>
           <div v-if="vehicle.eta">
-            <span class="font-medium text-white">ETA:</span> {{ vehicle.eta }}
+            <span class="font-bold text-white">ETA:</span> {{ vehicle.eta }}
           </div>
           <div>
-            <span class="font-medium text-white">Last Update:</span>
+            <span class="font-bold text-white">Last Update:</span>
             {{ vehicle.lastUpdated }}
           </div>
         </div>

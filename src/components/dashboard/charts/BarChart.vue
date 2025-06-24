@@ -70,10 +70,6 @@ export default {
         },
       },
 
-      // ------------------------------
-      // Mock data sources for filtering
-      // ------------------------------
-
       // Yearly data (Jan–Dec)
       yearNumbers: [
         140, 320, 552, 510, 1020, 900, 1130, 600, 710, 600, 750, 700,
