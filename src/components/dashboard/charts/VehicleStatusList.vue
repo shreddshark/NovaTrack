@@ -23,14 +23,13 @@ const totalPages = computed(() => {
   return Math.ceil(list.length / Number(perPage.value) || 1)
 })
 
-const paginated = computed(() => {
-  const list = allVehicles || []
+const paginatedVehicles = computed(() => {
+  const list = filteredVehicles.value || []
   if (perPage.value === "All") return list
   const perPageNum = Number(perPage.value) || 10
   const start = (currentPage.value - 1) * perPageNum
   return list.slice(start, start + perPageNum)
 })
-
 watch([statusFilter, perPage], () => {
   currentPage.value = 1
 })
